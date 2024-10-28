@@ -1,5 +1,5 @@
 # PandaDLL
-DLC Unlocker for the EA App written in C++. This was made an published for educational purposes only.
+DLC Unlocker for the EA App written in C++. This was made and published for educational purposes only.
 
 ## How to use
 - Put the built `version.dll` in the directory where you have installed the EA App. There should be an executable called EADesktop.exe in the directory.
