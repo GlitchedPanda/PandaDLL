@@ -14,5 +14,5 @@ TYP=type
 ```
 
 ## How to build
-- Download the detour library from github and put Detour-main in the root of your c drive.
+- Download the detours library from github and put Detours-main in the root of your c drive.
 - Press Build
