@@ -33,14 +33,21 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Install vcpkg
-      uses: lukka/run-vcpkg@v11
+    - name: Bootstrap vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        cd vcpkg
+        .\bootstrap-vcpkg.bat
+
+    - name: Integrate vcpkg with MSBuild
+      run: |
+        .\vcpkg\vcpkg.exe integrate install
     
     - name: Install dependencies from vcpkg.json
-      run: vcpkg install
+      run: .\vcpkg\vcpkg.exe install
 
-    - name: Build with MSBuild
-      run: |
-        msbuild PandaDLL.sln /m /p:Configuration=Release /p:Platform=x64 `
-          /p:AdditionalIncludeDirectories="${{ github.workspace }}\\vcpkg\\installed\\x64-windows\\include" `
-          /p:AdditionalLibraryDirectories="${{ github.workspace }}\\vcpkg\\installed\\x64-windows\\lib"
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 ${{env.SOLUTION_FILE_PATH}}
