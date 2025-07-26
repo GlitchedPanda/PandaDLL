@@ -33,9 +33,11 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+    - name: Install vcpkg
+        uses: lukka/run-vcpkg@v11
+    
+    - name: Install dependencies from vcpkg.json
+      run: vcpkg install
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}

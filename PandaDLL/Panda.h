@@ -5,7 +5,7 @@
 #define REGEXPR_NUMBER ^0$|^[1-9][0-9]*$
 
 #include <Windows.h>
-#include <detours.h>
+#include <detours/detours.h>
 #include <shlobj.h>
 
 #include <iostream>
@@ -24,7 +24,6 @@ class Panda
 {
 public:
 	static DWORD WINAPI attach(LPVOID lpParam);
-	static void detach();
 
 	static char* detourFunction(void* self);
 	static FARPROC getProcessAddrFromDllFunction(LPCSTR dllName, LPCSTR functionName);

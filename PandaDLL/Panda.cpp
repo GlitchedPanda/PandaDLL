@@ -37,13 +37,6 @@ DWORD WINAPI Panda::attach(LPVOID lpParam)
 	}
 
 	return 0;
-
-	return 1;
-}
-
-void Panda::detach()
-{
-	// I don't know what to put here
 }
 
 char* Panda::detourFunction(void* self)
@@ -73,9 +66,7 @@ char* Panda::detourFunction(void* self)
 
 int Panda::modifyResponse(char*& buffer)
 {
-
 	std::string modifiableString = std::string(_strdup(buffer));
-	//debug(modifiableString);
 
 	if (strstr(buffer, "Group=\"\"")) // Ignore this response because we don't want to modify it
 	{
@@ -92,11 +83,6 @@ int Panda::modifyResponse(char*& buffer)
 		++index;
 	}
 	newContent.append("</QueryEntitlementsResponse>");
-
-	/*debug(newContent.c_str());
-
-	char* replacementStart = strstr(modifiableString, "<QueryEntitlementsResponse>");
-	char* replacementEnd = strstr(modifiableString, "</QueryEntitlementsResponse>");*/
 
 	size_t start = modifiableString.find("<QueryEntitlementsResponse>");
 	size_t end = modifiableString.find("</QueryEntitlementsResponse>") + strlen("</QueryEntitlementsResponse>");
@@ -186,9 +172,9 @@ int Panda::loadEntitlements()
 	// Close the file when we're done
 	entitlementsFile.close();
 
-	//std::for_each(entitlements.begin(), entitlements.end(), [](Entitlement* entitlement) { debug(entitlement->getEntitlementString(1000000000006).c_str()); });
-
 	debug(std::string(std::string("Loaded ") + std::to_string(entitlements.size()) + std::string(" entitlements from config")).c_str());
+
+	return 1;
 }
 
 DWORD WINAPI Panda::freeBuffer(LPVOID lpParam)
