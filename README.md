@@ -2,6 +2,8 @@
 
 A DLC unlocker for the EA App written in C++. This was made and published for educational purposes only.
 
+> **Note:** This DLC unlocker does not download DLC content for you. You need to download the DLC files yourself. For Sims 4, you can find DLC-only downloads at: https://anadius.su/sims-4-dlc-only
+
 ## Quick Start
 
 ### Download
@@ -27,11 +29,11 @@ TYP=type
 
 **Example:**
 ```ini
-[Premium DLC Pack]
-IID=12345
-ETG=PREMIUM_CONTENT
-GRP=DLC
-TYP=ENTITLEMENT
+[The Sims™ 4 Outdoor Retreat]
+IID=SIMS4.OFF.SOLP.0x0000000000011A4B
+ETG=GreatOutdoors_0x0000000000011A4B:72267
+GRP=THESIMS4PC
+TYP=DEFAULT
 ```
 
 ## How to build
