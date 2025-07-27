@@ -23,17 +23,16 @@ typedef char* (*QXMLDATA)(void* self);
 class Panda
 {
 public:
-	static DWORD WINAPI attach(LPVOID lpParam);
+	static DWORD WINAPI Attach(LPVOID lpParam);
 
-	static char* detourFunction(void* self);
-	static FARPROC getProcessAddrFromDllFunction(LPCSTR dllName, LPCSTR functionName);
-	static DWORD WINAPI freeBuffer(LPVOID lpParam);
+	static char* DetourFunction(void* self);
+	static FARPROC GetProcAddrFromDllFunc(LPCSTR dllName, LPCSTR functionName);
+	static DWORD WINAPI FreeBuffer(LPVOID lpParam);
 
-	static int modifyResponse(char*& buffer);
-    static int loadEntitlements();
+	static int ModifyResponse(char*& buffer);
+    static int LoadEntitlements();
 
-	static void debug(LPCSTR message);
-	static void debugW(LPCWSTR message);
+	static void Debug(LPCSTR message);
 };
 
 class Entitlement

@@ -1,6 +1,6 @@
 #include "Panda.h"
 
-WCHAR processName[264];
+WCHAR processName[528];
 HMODULE originalDll;
 
 BOOL APIENTRY DllMain( HMODULE hModule, DWORD  reason, LPVOID lpReserved )
@@ -10,13 +10,13 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  reason, LPVOID lpReserved )
         char systemPath[MAX_PATH]; 
         UINT length = GetSystemDirectoryA(systemPath, MAX_PATH);
 
-        Panda::debug(systemPath);
+        Panda::Debug(systemPath);
 
         originalDll = LoadLibraryA("C:\\Windows\\System32\\version.dll");
         GetModuleFileNameW(0, processName, sizeof(processName));
         if (wcsstr(processName, L"EADesktop.exe"))
         {
-            CreateThread(0, 0, Panda::attach, (LPVOID)hModule, 0, 0);
+            CreateThread(0, 0, Panda::Attach, (LPVOID)hModule, 0, 0);
         }
     } 
     else if (reason == DLL_PROCESS_DETACH)

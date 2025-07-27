@@ -4,16 +4,16 @@ QXMLDATA procAddr = nullptr;
 
 std::vector<Entitlement*> entitlements = {};
 
-DWORD WINAPI Panda::attach(LPVOID lpParam)
+DWORD WINAPI Panda::Attach(LPVOID lpParam)
 {
 	HMODULE hModule = (HMODULE)lpParam;
-	debug("Attached to EADesktop.exe"); 
+	Debug("Attached to EADesktop.exe"); 
 
 	while (!GetModuleHandleW(L"Qt5Core.dll"))
 		Sleep(1000);
-	debug("Qt5Core.dll loaded");
+	Debug("Qt5Core.dll loaded");
 
-	procAddr = (QXMLDATA)getProcessAddrFromDllFunction("Qt5Core.dll", "?data@?$QVector@VQXmlStreamAttribute@@@@QEBAPEBVQXmlStreamAttribute@@XZ");
+	procAddr = (QXMLDATA)GetProcAddrFromDllFunc("Qt5Core.dll", "?data@?$QVector@VQXmlStreamAttribute@@@@QEBAPEBVQXmlStreamAttribute@@XZ");
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
@@ -21,50 +21,49 @@ DWORD WINAPI Panda::attach(LPVOID lpParam)
 	{
 		std::stringstream ss;
 		ss << "Found dll function: " << procAddr;
-		debug(ss.str().c_str());
+		Debug(ss.str().c_str());
 
-		DetourAttach(&(PVOID&)procAddr, Panda::detourFunction);
+		DetourAttach(&(PVOID&)procAddr, Panda::DetourFunction);
 		DetourTransactionCommit();
-		debug("Detoured function successfully");
+		Debug("Detoured function successfully");
 
 		// Parse the config to get entitlement values
-		Panda::loadEntitlements(); 
+		Panda::LoadEntitlements(); 
 	}
 	else
 	{
-		debug("Could not find hook function");
+		Debug("Could not find hook function");
 		DetourTransactionAbort();
 	}
 
 	return 0;
 }
 
-char* Panda::detourFunction(void* self)
+char* Panda::DetourFunction(void* self)
 {
-	//debug("Detour func called");
-	char* hookFuncRes = procAddr(self);
+	char* hookFuncResult = procAddr(self);
 
-	if (!hookFuncRes || !strstr(hookFuncRes, "<LSX>"))
-		return hookFuncRes;
+	if (!hookFuncResult || !strstr(hookFuncResult, "<LSX>"))
+		return hookFuncResult;
 
-	char* modifiedResponse = _strdup(hookFuncRes);
+	char* modifiedResponse = _strdup(hookFuncResult);
 	char* hasIsLessThan = (char*)memchr(modifiedResponse, '<', sizeof(modifiedResponse));
 	if (!hasIsLessThan)
-		return hookFuncRes;
+		return hookFuncResult;
 	
 	if (!strstr(modifiedResponse, "<Response ") || !strstr(modifiedResponse, "<QueryEntitlementsResponse>"))
-		return hookFuncRes;
+		return hookFuncResult;
 
 	// Edit response
-	Panda::modifyResponse(modifiedResponse);
+	Panda::ModifyResponse(modifiedResponse);
 
 	// Create a thread to free buffer after 1 second
-	CreateThread(0, 0, Panda::freeBuffer, modifiedResponse, 0, 0);
+	CreateThread(0, 0, Panda::FreeBuffer, modifiedResponse, 0, 0);
 
 	return modifiedResponse;
 }
 
-int Panda::modifyResponse(char*& buffer)
+int Panda::ModifyResponse(char*& buffer)
 {
 	std::string modifiableString = std::string(_strdup(buffer));
 
@@ -95,7 +94,7 @@ int Panda::modifyResponse(char*& buffer)
 	return 1;
 }
 
-int Panda::loadEntitlements()
+int Panda::LoadEntitlements()
 {
 	std::string line;
 
@@ -111,7 +110,7 @@ int Panda::loadEntitlements()
 	std::ifstream entitlementsFile(std::string(appData) + "\\GlitchedPanda\\EA DLC Unlocker V1\\entitlements.ini");
 	if (!entitlementsFile.is_open())
 	{
-		debug("Could not load entitlements file");
+		Debug("Could not load entitlements file");
 		return 0;
 	}
 
@@ -172,46 +171,39 @@ int Panda::loadEntitlements()
 	// Close the file when we're done
 	entitlementsFile.close();
 
-	debug(std::string(std::string("Loaded ") + std::to_string(entitlements.size()) + std::string(" entitlements from config")).c_str());
+	Debug(std::string(std::string("Loaded ") + std::to_string(entitlements.size()) + std::string(" entitlements from config")).c_str());
 
 	return 1;
 }
 
-DWORD WINAPI Panda::freeBuffer(LPVOID lpParam)
+DWORD WINAPI Panda::FreeBuffer(LPVOID lpParam)
 {
 	Sleep(1000);
 	free(lpParam);
 	return 0;
 }
 
-FARPROC Panda::getProcessAddrFromDllFunction(LPCSTR dllName, LPCSTR functionName)
+FARPROC Panda::GetProcAddrFromDllFunc(LPCSTR dllName, LPCSTR functionName)
 {
 	HMODULE hModule = LoadLibraryExA(dllName, 0, 0);
 	if (!hModule)
 	{
-		debug("Could not load dll");
+		Debug("Could not load dll");
 		return 0;
 	}
 	FARPROC procAddress = GetProcAddress(hModule, functionName);
 	if (!procAddress)
 	{
-		debug("Could not load function from dll");
+		Debug("Could not load function from dll");
 		return 0;
 	}
 
 	return procAddress;
 }
 
-void Panda::debug(LPCSTR message)
+void Panda::Debug(LPCSTR message)
 {
 	std::stringstream ss;
 	ss << "[Panda] " << message;
 	OutputDebugStringA(ss.str().c_str());
-}
-
-void Panda::debugW(LPCWSTR message)
-{
-	std::wstringstream ss;
-	ss << L"[Panda] " << message;
-	OutputDebugStringW(ss.str().c_str());
 }
