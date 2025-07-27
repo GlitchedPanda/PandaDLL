@@ -8,11 +8,14 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  reason, LPVOID lpReserved )
     if (reason == DLL_PROCESS_ATTACH)
     {
         char systemPath[MAX_PATH]; 
-        UINT length = GetSystemDirectoryA(systemPath, MAX_PATH);
+        GetSystemDirectoryA(systemPath, MAX_PATH);
 
-        Panda::Debug(systemPath);
+        char fullPath[MAX_PATH];
+        sprintf_s(fullPath, MAX_PATH, "%s\\version.dll", systemPath);
+        originalDll = LoadLibraryA(fullPath);
 
-        originalDll = LoadLibraryA("C:\\Windows\\System32\\version.dll");
+        Panda::Debug(fullPath);
+
         GetModuleFileNameW(0, processName, sizeof(processName));
         if (wcsstr(processName, L"EADesktop.exe"))
         {
