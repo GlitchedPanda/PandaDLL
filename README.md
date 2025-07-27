@@ -1,11 +1,23 @@
 # PandaDLL
-DLC Unlocker for the EA App written in C++. This was made and published for educational purposes only.
+
+A DLC unlocker for the EA App written in C++. This was made and published for educational purposes only.
+
+## Quick Start
+
+### Download
+Head to the [Releases](../../releases) page and download the latest `version.dll`.
 
 ## How to use
-- Put the built `version.dll` in the directory where you have installed the EA App. There should be an executable called EADesktop.exe in the directory.
-- Make a folder in %appdata% called `GlitchedPanda`, inside that make a folder called `EA DLC Unlocker V1`.
-- Make a file called entitlements.ini inside this folder. The format is:
-```
+
+1. Locate your EA App installation directory (usually contains `EADesktop.exe`)
+2. Place the `version.dll` file in this directory
+3. Create the following folder structure:
+   ```
+   %appdata%\GlitchedPanda\EA DLC Unlocker V1\
+   ```
+4. Create `entitlements.ini` in the above directory with the following format:
+
+```ini
 [Pretty Name]
 IID=itemId
 ETG=entitlementTag
@@ -13,6 +25,29 @@ GRP=group
 TYP=type
 ```
 
+**Example:**
+```ini
+[Premium DLC Pack]
+IID=12345
+ETG=PREMIUM_CONTENT
+GRP=DLC
+TYP=ENTITLEMENT
+```
+
 ## How to build
-- Download the detours library from github and put Detours-main in the root of your c drive.
-- Press Build
+
+### Prerequisites
+- Visual Studio 2019 or later
+- vcpkg package manager
+
+### Build steps
+1. Clone vcpkg if you haven't already: `git clone https://github.com/Microsoft/vcpkg.git`
+2. Run `.\vcpkg\bootstrap-vcpkg.bat`
+3. Integrate with Visual Studio: `.\vcpkg\vcpkg integrate install`
+4. Open the project in Visual Studio
+5. Dependencies will be automatically installed via vcpkg.json
+6. Build the project (Ctrl+Shift+B)
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
